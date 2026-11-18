@@ -3,8 +3,8 @@ export const guides = [
     slug: 'choosing-a-rug-size',
     topic: 'Soft furnishings',
     title: 'How to choose the right rug size',
-    image: 'stillwood',
-    alt: 'A woven rug beneath a moss velvet sofa and travertine table',
+    image: 'stillwood-slate',
+    alt: 'A grey woven rug beneath a blue-green velvet sofa and pale travertine table',
     intro: 'Start with the furniture you want the rug to connect. Then use the room’s walkways to narrow down the size.',
     sections: [
       ['Let the sofa set the width', 'For a living room, look for a rug wider than the sofa. Place the front feet of the sofa and chairs on it so the seating reads as one group. If you prefer all four feet on the rug, check that there is still a visible border of floor around it.'],
@@ -33,8 +33,8 @@ export const guides = [
     slug: 'setting-a-table-for-company',
     topic: 'Dining',
     title: 'Set a table for good company',
-    image: 'dining-hero',
-    alt: 'An oval walnut dining table set with a ceramic vase and linen runner',
+    image: 'dining-hero-slate',
+    alt: 'A charcoal oak dining table with a pale ceramic vase and glassware',
     intro: 'A few choices can make a dining table easier to share, from the shape of the table to where you set the serving dishes.',
     sections: [
       ['Make space around the table', 'Measure with the chairs pulled out and leave a clear route to the doorway. If the room is narrow, an oval table can make it easier to pass around the ends.'],

@@ -114,7 +114,7 @@ function Hero() {
     return () => preference.removeEventListener('change', sync);
   }, []);
   return <section className="hero" aria-label="The dining collection">
-    <video ref={video} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} muted playsInline loop preload="metadata" poster={media('dining-hero')} src="/media/dining-hero.mp4"/>
+    <video ref={video} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} muted playsInline loop preload="metadata" poster={media('dining-hero-slate')} src="/media/dining-hero-slate.mp4"/>
     <div className="hero-scrim"/>
     <div className="hero-copy"><h1>Room for good company</h1><a href={shop('dining')}>Shop dining</a></div>
     <button className="icon-button video-toggle" aria-label={playing ? 'Pause video' : 'Play video'} onClick={() => {
@@ -126,8 +126,8 @@ function Hero() {
 
 function Collection() {
   return <section className="collection">
-    <div className="collection-copy"><span className="eyebrow">Introducing</span><h2>The Stillwood Edit</h2><p>Rounded shapes and earthy tones meet dark walnut, velvet and stone. Discover pieces that make a living room feel settled from the moment you walk in.</p><a className="text-link" href={shop('sofas')}>Shop the collection</a></div>
-    <a href={shop('sofas')} className="collection-image"><img src={media('stillwood')} alt="Moss velvet sofa beside a travertine coffee table" loading="lazy" width="1200" height="900"/></a>
+    <div className="collection-copy"><span className="eyebrow">Introducing</span><h2>The Stillwood Edit</h2><p>Curved velvet seating, dark oak and pale stone bring texture to a cool, quiet living room.</p><a className="text-link" href={shop('sofas')}>Shop the collection</a></div>
+    <a href={shop('sofas')} className="collection-image"><img src={media('stillwood-slate')} alt="Blue-green velvet sofa beside a pale travertine coffee table" loading="lazy" width="1200" height="900"/></a>
   </section>;
 }
 
