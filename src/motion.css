@@ -1,0 +1,68 @@
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+
+  :root {
+    --motion-ease: cubic-bezier(.22, .72, .25, 1);
+    --motion-quick: 180ms;
+  }
+
+  ::view-transition-old(root) { animation: 125ms ease-out both page-fade-out; }
+  ::view-transition-new(root) { animation: 230ms ease-out both page-fade-in; }
+
+  .hero h1 { animation: 660ms var(--motion-ease) 65ms both title-rise; }
+  .hero-copy a { display: inline-block; animation: 540ms var(--motion-ease) 175ms both rise; }
+  .video-toggle { animation: 440ms ease-out 180ms both page-fade-in; }
+
+  :is(.catalogue-heading, .page > h1, .guide header) {
+    animation: 420ms var(--motion-ease) both rise;
+  }
+  .filter-bar { animation: 400ms var(--motion-ease) 55ms both page-fade-in; }
+  .detail-photo { animation: 620ms var(--motion-ease) both image-reveal; }
+  .detail-info { animation: 500ms var(--motion-ease) 65ms both enter-side; }
+  .detail-photo img { transition: transform 460ms var(--motion-ease); }
+
+  :is(.account-panel, .basket-line, .checkout-form, .page > .empty, .catalogue > .empty) {
+    animation: 420ms var(--motion-ease) both rise;
+  }
+  .basket-line:nth-child(2) { animation-delay: 45ms; }
+  .basket-line:nth-child(3) { animation-delay: 90ms; }
+  .basket-layout .summary { animation: 480ms var(--motion-ease) 90ms both enter-side; }
+  .order-confirmation svg { animation: 420ms var(--motion-ease) 100ms both confirm-draw; }
+
+  dialog[open] { animation: 270ms var(--motion-ease) both rise; }
+  dialog[open]::backdrop { animation: 230ms ease-out both page-fade-in; }
+  .menu-dialog[open] { animation: 320ms var(--motion-ease) both menu-slide; }
+  .basket-dialog[open] { animation: 300ms var(--motion-ease) both confirmation-pop; }
+  details[open] > :not(summary) { animation: 240ms var(--motion-ease) both rise; }
+
+  .icon-button svg, .campaign-strip svg, .service-card svg:last-child {
+    transition: transform var(--motion-quick) var(--motion-ease), fill var(--motion-quick) ease;
+  }
+  .button, .line-actions button, .filter-bar button, .video-toggle {
+    transition: background-color var(--motion-quick) ease, transform var(--motion-quick) var(--motion-ease);
+  }
+  :is(.button, .line-actions button, .icon-button):active:not(:disabled) { transform: scale(.97); }
+  .icon-button.saved svg { animation: 290ms var(--motion-ease) both heart-pop; }
+  .bag-icon span { animation: 250ms var(--motion-ease) both confirmation-pop; }
+  .journal-image { clip-path: inset(0); transition: clip-path 320ms var(--motion-ease); }
+
+  @media (hover: hover) {
+    .header-actions .icon-button:hover svg { transform: translateY(-2px); }
+    :is(.campaign-strip a, .service-card):hover svg:last-child { transform: translateX(4px); }
+    .journal-card a:hover .journal-image { clip-path: inset(0 2%); }
+  }
+
+  @keyframes page-fade-out { to { opacity: 0; } }
+  @keyframes page-fade-in { from { opacity: 0; } }
+  @keyframes rise { from { opacity: .6; transform: translateY(9px); } }
+  @keyframes title-rise { from { opacity: 0; transform: translateY(22px); } }
+  @keyframes enter-side { from { opacity: .65; transform: translateX(10px); } }
+  @keyframes image-reveal { from { opacity: .7; clip-path: inset(0 0 9% 0); } to { clip-path: inset(0); } }
+  @keyframes menu-slide { from { transform: translateX(-100%); } }
+  @keyframes confirmation-pop { from { opacity: .55; transform: scale(.94); } }
+  @keyframes heart-pop { 45% { transform: scale(1.22); } }
+  @keyframes confirm-draw {
+    from { stroke-dasharray: 26; stroke-dashoffset: 26; }
+    to { stroke-dasharray: 26; stroke-dashoffset: 0; }
+  }
+}

@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { byId, categories, dining, diningCategory, featured, item, media, money, products, shop } from './catalog.js';
 import { guidePath, guides } from './journal.js';
+import { useScrollReveal } from './motion.js';
 import './styles.css';
+import './motion.css';
 
 const iconPaths = {
   search: <><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></>,
@@ -52,7 +54,7 @@ function Header({ total, current }) {
         <button className="icon-button search-button" aria-label="Search" onClick={() => search.current.showModal()}><span>Search</span><Icon name="search"/></button>
         <a className="icon-button" href="/favourites/" aria-label="Favourites"><Icon name="heart"/></a>
         <a className="icon-button account-link" href="/account/" aria-label="My account"><Icon name="user"/></a>
-        <a className="icon-button bag-icon" href="/bag/" aria-label={`Shopping bag, ${total} items`}><Icon name="bag"/>{total > 0 && <span>{total}</span>}</a>
+        <a className="icon-button bag-icon" href="/bag/" aria-label={`Shopping bag, ${total} items`}><Icon name="bag"/>{total > 0 && <span key={total}>{total}</span>}</a>
       </div>
     </header>
     <dialog ref={search} className="search-dialog" aria-labelledby="search-title">
@@ -93,7 +95,9 @@ function ProductCard({ product, favourites, toggleFavourite }) {
 }
 
 function ProductGrid({ list, shopState, className = '' }) {
-  return <div className={`product-grid ${className}`}>{list.map(product => <ProductCard key={product.id} product={product} {...shopState}/>)}</div>;
+  const grid = useRef(null);
+  useScrollReveal(grid, '.product-card', list.map(product => product.id).join(','));
+  return <div ref={grid} className={`product-grid ${className}`}>{list.map(product => <ProductCard key={product.id} product={product} {...shopState}/>)}</div>;
 }
 
 function Hero() {
@@ -326,7 +330,7 @@ function Checkout({ lines, clear, setOrders }) {
   return <>
     <Breadcrumb steps={[[ 'Shopping Bag', '/bag/' ], [ 'Checkout' ]]}/>
     <section className="wrap page"><h1>Checkout</h1>
-      {confirmation ? <div className="empty"><Icon name="check"/><h2>Demo order placed</h2><p>Your reference is <strong>{confirmation}</strong>.</p><a className="button" href={shop()}>Continue shopping</a></div> :
+      {confirmation ? <div className="empty order-confirmation"><Icon name="check"/><h2 role="status">Demo order placed</h2><p>Your reference is <strong>{confirmation}</strong>.</p><a className="button" href={shop()}>Continue shopping</a></div> :
       lines.length ? <div className="basket-layout">
         <form className="checkout-form" onSubmit={submit}><p className="notice">Demo checkout. Use sample details. No payment or delivery will take place.</p><h2>Delivery details</h2>
           <label>Full name<input autoComplete="name" required/></label><label>Email address<input type="email" autoComplete="email" required/></label><label>Street address<input autoComplete="street-address" required/></label><div className="form-two"><label>Town or city<input autoComplete="address-level2" required/></label><label>Postcode<input autoComplete="postal-code" required/></label></div><button className="button">Place demo order</button>
@@ -373,6 +377,8 @@ function Help() {
 }
 
 function App() {
+  const main = useRef(null);
+  useScrollReveal(main, '.section-heading, .featured h2, .department-grid > a, .collection-copy, .collection-image, .journal-card, .review-card, .service-card, .guide-image, .guide-body > section');
   const [favourites, setFavourites] = useStored('morrow-favourites', []);
   const [bag, setBag] = useStored('morrow-bag', {});
   const [orders, setOrders] = useStored('morrow-orders', []);
@@ -409,7 +415,7 @@ function App() {
   if (route === 'help') page = <Help/>;
   if (route === 'journal' && (!slug || guide)) page = <Journal guide={guide}/>;
   if (route === 'inspiration') page = <><Breadcrumb steps={[[ 'Inspiration' ]]}/><section className="wrap page"><h1>Inspiration</h1><Collection/></section></>;
-  return <><Header total={total} current={category?.id}/><main id="main">{page}</main><Footer/></>;
+  return <><Header total={total} current={category?.id}/><main ref={main} id="main">{page}</main><Footer/></>;
 }
 
 createRoot(document.getElementById('root')).render(<App/>);
