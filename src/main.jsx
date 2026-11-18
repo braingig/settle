@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { byId, categories, dining, diningCategory, featured, item, media, money, products, shop } from './catalog.js';
+import { guidePath, guides } from './journal.js';
 import './styles.css';
 
 const iconPaths = {
@@ -13,6 +14,9 @@ const iconPaths = {
   pause: <path d="M9 5v14m6-14v14"/>,
   play: <path d="m8 5 12 7-12 7Z"/>,
   arrow: <path d="M4 12h15m-6-6 6 6-6 6"/>,
+  truck: <><path d="M2 5h13v12H2zm13 5h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></>,
+  return: <><path d="M4 10h11a5 5 0 0 1 0 10h-3M4 10l5-5M4 10l5 5"/></>,
+  care: <><path d="M20 4C11 4 5 8 5 14a5 5 0 0 0 5 5c6 0 10-6 10-15ZM4 20l9-9"/></>,
   check: <path d="m4 12 5 5L20 6"/>,
 };
 
@@ -30,7 +34,7 @@ function useStored(key, initial) {
 
 const links = [...categories, diningCategory];
 const allCategory = { id: 'all', name: 'Shop All', description: 'Explore our complete collection of furniture, lighting and objects for the home.' };
-const brand = 'Morrow & Form';
+const brand = 'Settle';
 
 function Header({ total, current }) {
   const search = useRef(null);
@@ -40,7 +44,7 @@ function Header({ total, current }) {
     <div className="announcement"><a href="/help/">UK delivery and returns</a></div>
     <header className="header">
       <button className="icon-button mobile-menu" aria-label="Open menu" onClick={() => menu.current.showModal()}><Icon name="menu"/></button>
-      <a className="wordmark" href="/" aria-label={brand}>MORROW<span>&</span>FORM</a>
+      <a className="wordmark" href="/" aria-label={brand}>{brand}</a>
       <nav aria-label="Main navigation">
         {categories.map(category => <a href={shop(category.id)} key={category.id} aria-current={current === category.id ? 'page' : undefined}>{category.name}</a>)}
       </nav>
@@ -59,7 +63,7 @@ function Header({ total, current }) {
     </dialog>
     <dialog ref={menu} className="menu-dialog" aria-label="Shop menu">
       <button className="icon-button close-dialog" onClick={() => menu.current.close()} aria-label="Close menu"><Icon name="close"/></button>
-      <p className="wordmark">MORROW<span>&</span>FORM</p>
+      <p className="wordmark">{brand}</p>
       {[allCategory, ...links].map(({id, name}) => <a key={id} href={shop(id)}>{name}<Icon name="arrow"/></a>)}
       <a href="/account/">My account<Icon name="arrow"/></a>
     </dialog>
@@ -69,9 +73,9 @@ function Header({ total, current }) {
 function Footer() {
   return <footer className="footer">
     <div className="footer-grid wrap">
-      <div><a className="wordmark" href="/">MORROW<span>&</span>FORM</a><p>Contemporary furniture and objects for home.</p></div>
+      <div><a className="wordmark" href="/">{brand}</a><p>Contemporary furniture and objects for home.</p></div>
       <div><h3>How can we help</h3><a href="/help/#delivery">Delivery information</a><a href="/help/#returns">Returns</a><a href="/help/#faq">Frequently asked questions</a></div>
-      <div><h3>About us</h3><a href="/inspiration/">Inspiration</a><a href="/account/">My account</a><a href="/help/#privacy">Privacy</a></div>
+      <div><h3>About us</h3><a href="/inspiration/">Inspiration</a><a href="/journal/">Design journal</a><a href="/account/">My account</a><a href="/help/#privacy">Privacy</a></div>
       <div><h3>Shop by department</h3><a href={shop()}>Shop all</a>{links.map(({id, name}) => <a key={id} href={shop(id)}>{name}</a>)}</div>
     </div>
     <div className="footer-bottom wrap"><span>© {brand} {new Date().getFullYear()}</span><span>United Kingdom · GBP £</span></div>
@@ -123,6 +127,64 @@ function Collection() {
   </section>;
 }
 
+const newArrivals = ['sofas-2', 'furniture-1', 'lighting-3', 'textiles-2'].map(id => byId[id]);
+const sampleReviews = [
+  { id: 'sofas-2', rating: 5, title: 'Room to stretch out', quote: 'The moss velvet gives the room some colour, and the wide seat is just right for an evening with a book.' },
+  { id: 'furniture-1', rating: 5, title: 'Works for weekday dinners, too', quote: 'The oval ends make it easy to walk around the table, even with the chairs pulled out.' },
+  { id: 'lighting-3', rating: 4, title: 'A softer light for the evening', quote: 'The linen shade gives a warm glow. I use it on the sideboard when the overhead light feels too bright.' },
+];
+const services = [
+  { id: 'delivery', icon: 'truck', name: 'UK delivery', description: 'See the standard delivery charge used in our demo checkout.' },
+  { id: 'returns', icon: 'return', name: 'Returns', description: 'Find out how returns work for demo orders.' },
+  { id: 'care', icon: 'care', name: 'Furniture care', description: 'Everyday care for upholstery, wood and ceramics.' },
+];
+
+function JournalCards({ heading: Heading = 'h3' }) {
+  return <div className="journal-grid">
+    {guides.map(guide => <article className="journal-card" key={guide.slug}>
+      <a href={guidePath(guide)}>
+        <img className={`journal-image journal-image--${guide.category}`} src={media(guide.image)} alt="" loading="lazy"/>
+        <span className="eyebrow">{guide.topic}</span>
+        <Heading className="journal-card-title">{guide.title}</Heading>
+        <span className="text-link">Read the guide</span>
+      </a>
+    </article>)}
+  </div>;
+}
+
+function HomeReviews() {
+  return <section className="reviews" aria-labelledby="reviews-title">
+    <div className="wrap">
+      <h2 id="reviews-title">Reviews</h2>
+      <p className="reviews-note">Sample reviews for this demo store</p>
+      <div className="review-grid">
+        {sampleReviews.map(({ id, rating, title, quote }) => {
+          const product = byId[id];
+          return <article className="review-card" key={id}>
+            <div className="review-rating" role="img" aria-label={`${rating} out of 5 stars`}><span aria-hidden="true">{'★'.repeat(rating)}{'☆'.repeat(5 - rating)}</span></div>
+            <h3>{title}</h3>
+            <blockquote>{quote}</blockquote>
+            <a className="text-link" href={item(product)}>{product.name} {product.type}</a>
+          </article>;
+        })}
+      </div>
+    </div>
+  </section>;
+}
+
+function DeliveryAndCare() {
+  return <section className="service-section" aria-labelledby="service-title">
+    <div className="wrap">
+      <h2 id="service-title">Delivery and care</h2>
+      <div className="service-grid">
+        {services.map(({ id, icon, name, description }) => <a href={`/help/#${id}`} className="service-card" key={id}>
+          <Icon name={icon}/><div><h3>{name}</h3><p>{description}</p></div><Icon name="arrow"/>
+        </a>)}
+      </div>
+    </div>
+  </section>;
+}
+
 function Home({ shopState }) {
   const departments = [
     { id: 'furniture', label: 'Shop furniture', image: 'furniture-3' },
@@ -140,7 +202,17 @@ function Home({ shopState }) {
       </a>)}
     </section>
     <Collection/>
+    <section className="home-arrivals wrap" aria-labelledby="arrivals-title">
+      <div className="section-heading"><h2 id="arrivals-title">New In</h2><a className="text-link" href={`${shop()}?new=1`}>Shop all new arrivals</a></div>
+      <ProductGrid list={newArrivals} shopState={shopState}/>
+    </section>
+    <section className="home-journal wrap" aria-labelledby="journal-title">
+      <div className="section-heading"><h2 id="journal-title">Design Journal</h2><a className="text-link" href="/journal/">View the journal</a></div>
+      <JournalCards/>
+    </section>
+    <HomeReviews/>
     <section className="explore wrap"><h2>More to explore</h2><nav aria-label="Explore more collections">{[allCategory, ...links].map(({id, name}) => <a key={id} href={shop(id)}>{name}</a>)}</nav></section>
+    <DeliveryAndCare/>
   </>;
 }
 
@@ -148,9 +220,9 @@ function Breadcrumb({ steps }) {
   return <div className="breadcrumb"><nav className="wrap" aria-label="Breadcrumb"><a href="/">Home</a>{steps.map(([label, href]) => <React.Fragment key={label}><span aria-hidden="true">/</span>{href ? <a href={href}>{label}</a> : <span aria-current="page">{label}</span>}</React.Fragment>)}</nav></div>;
 }
 
-function Catalogue({ category, query, shopState }) {
+function Catalogue({ category, query, newOnly, shopState }) {
   const [sort, setSort] = useState('relevant');
-  const [filters, setFilters] = useState({ category: '', colour: '', material: '', price: '', isNew: false });
+  const [filters, setFilters] = useState({ category: '', colour: '', material: '', price: '', isNew: newOnly });
   const group = category.id === 'all' ? products : category.id === 'dining' ? dining : products.filter(p => p.category === category.id);
   const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
   const matches = group.filter(product => {
@@ -246,7 +318,7 @@ function Checkout({ lines, clear, setOrders }) {
   const subtotal = lines.reduce((total, {product, quantity}) => total + product.price * quantity, 0);
   function submit(e) {
     e.preventDefault();
-    const reference = 'MF-' + crypto.randomUUID().slice(0, 8).toUpperCase();
+    const reference = 'STL-' + crypto.randomUUID().slice(0, 8).toUpperCase();
     setOrders(orders => [{ reference, total: subtotal + delivery, count: lines.reduce((n, line) => n + line.quantity, 0) }, ...orders]);
     setConfirmation(reference);
     clear();
@@ -269,10 +341,32 @@ function Account({ orders }) {
   return <><Breadcrumb steps={[[ 'My account' ]]}/><section className="wrap page"><h1>My account</h1><div className="account-panel"><h2>Demo orders</h2><p>Orders placed in the demo checkout are stored in this browser.</p>{orders.length ? <ul>{orders.map(order => <li key={order.reference}><strong>{order.reference}</strong><span>{order.count} {order.count === 1 ? 'item' : 'items'} · {money(order.total)}</span></li>)}</ul> : <p>You have no demo orders yet.</p>}<a className="button" href={shop()}>Shop all</a></div></section></>;
 }
 
+function Journal({ guide }) {
+  if (!guide) return <><Breadcrumb steps={[[ 'Design Journal' ]]}/><section className="wrap page"><h1>Design Journal</h1><JournalCards heading="h2"/></section></>;
+  return <>
+    <Breadcrumb steps={[[ 'Design Journal', '/journal/' ], [guide.title]]}/>
+    <article className="wrap page guide">
+      <header><p className="eyebrow">{guide.topic}</p><h1>{guide.title}</h1><p>{guide.intro}</p></header>
+      <img className={`guide-image journal-image--${guide.category}`} src={media(guide.image)} alt={guide.alt}/>
+      <div className="guide-body">
+        {guide.sections.map(([title, body]) => <section key={title}><h2>{title}</h2><p>{body}</p></section>)}
+        <a className="button" href={shop(guide.category)}>{guide.shopLabel}</a>
+      </div>
+    </article>
+  </>;
+}
+
 function Help() {
-  return <><Breadcrumb steps={[[ 'Help' ]]}/><section className="wrap page help-page"><h1>Help centre</h1><p className="notice">Morrow & Form is a sample storefront. All prices and delivery terms are illustrative.</p>
+  useEffect(() => {
+    document.getElementById(window.location.hash.slice(1))?.scrollIntoView();
+  }, []);
+  return <><Breadcrumb steps={[[ 'Help' ]]}/><section className="wrap page help-page"><h1>Help centre</h1><p className="notice">{brand} is a sample storefront. All prices and delivery terms are illustrative.</p>
     <h2 id="delivery">Delivery information</h2><p>The checkout illustrates standard UK delivery at {money(delivery)} per order.</p>
     <h2 id="returns">Returns</h2><p>Demo orders do not ship, so no returns are needed.</p>
+    <h2 id="care">Furniture care</h2>
+    <details><summary>Upholstery</summary><p>Use a soft vacuum attachment to remove dust. Blot spills promptly with a clean cloth and follow the fabric’s care label before applying any cleaner.</p></details>
+    <details><summary>Wood and stone</summary><p>Dust with a soft cloth, use coasters under drinks and wipe up spills promptly. Check the finish’s care instructions before using a cleaning product.</p></details>
+    <details><summary>Ceramics and glass</summary><p>Check the maker’s instructions before using a dishwasher. For decorative pieces, a soft, slightly damp cloth is usually enough to lift dust.</p></details>
     <h2 id="faq">Frequently asked questions</h2><details><summary>Where can I find my demo order?</summary><p>Open <a className="text-link" href="/account/">My account</a> in the browser you used to check out.</p></details>
     <h2 id="privacy">Privacy</h2><p>Your bag, favourites and demo order summaries are saved in your browser. Delivery details entered in checkout are not stored or submitted.</p>
   </section></>;
@@ -295,21 +389,25 @@ function App() {
   const [route, slug] = window.location.pathname.split('/').filter(Boolean);
   const category = route === 'shop' && (slug ? [allCategory, ...links].find(c => c.id === slug) : allCategory);
   const product = route === 'product' && products.find(p => p.slug === slug);
+  const guide = route === 'journal' && guides.find(entry => entry.slug === slug);
   const savedList = favourites.map(id => byId[id]).filter(Boolean);
-  const query = new URLSearchParams(window.location.search).get('q')?.trim() || '';
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get('q')?.trim() || '';
+  const newOnly = params.get('new') === '1';
   useEffect(() => {
-    const label = product?.name || category?.name || ({favourites: 'Favourites', bag: 'Shopping Bag', checkout: 'Checkout', inspiration: 'Inspiration', help: 'Help', account: 'My account'})[route];
+    const label = product?.name || guide?.title || category?.name || ({journal: 'Design Journal', favourites: 'Favourites', bag: 'Shopping Bag', checkout: 'Checkout', inspiration: 'Inspiration', help: 'Help', account: 'My account'})[route];
     if (label) document.title = `${label} | ${brand}`;
-  }, [route, category, product]);
+  }, [route, category, product, guide]);
   let page = <section className="wrap page"><Empty title="Page not found" description="Explore the furniture and homeware collection."/></section>;
   if (!route) page = <Home shopState={shopState}/>;
-  if (category) page = <Catalogue category={category} query={query} shopState={shopState}/>;
+  if (category) page = <Catalogue category={category} query={query} newOnly={newOnly} shopState={shopState}/>;
   if (product) page = <Product product={product} shopState={shopState} add={update}/>;
   if (route === 'favourites') page = <><Breadcrumb steps={[[ 'Favourites' ]]}/><section className="wrap page"><h1>Favourites</h1>{savedList.length ? <ProductGrid list={savedList} shopState={shopState}/> : <Empty title="Save your favourites" description="Tap the heart on any product to keep it here."/>}</section></>;
   if (route === 'bag') page = <Bag lines={lines} update={update}/>;
   if (route === 'checkout') page = <Checkout lines={lines} clear={() => setBag({})} setOrders={setOrders}/>;
   if (route === 'account') page = <Account orders={orders}/>;
   if (route === 'help') page = <Help/>;
+  if (route === 'journal' && (!slug || guide)) page = <Journal guide={guide}/>;
   if (route === 'inspiration') page = <><Breadcrumb steps={[[ 'Inspiration' ]]}/><section className="wrap page"><h1>Inspiration</h1><Collection/></section></>;
   return <><Header total={total} current={category?.id}/><main id="main">{page}</main><Footer/></>;
 }

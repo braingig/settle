@@ -1,4 +1,4 @@
-# Morrow & Form
+# Settle
 
 A React and Vite furniture storefront with 50 sample products. Each department contains 10 products, and the Dining Room edit curates 10 items from the main catalog.
 
